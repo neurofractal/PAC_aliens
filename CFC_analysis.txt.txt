@@ -1,0 +1,7 @@
+At present:
+
+- Run VE_for_PAC to get VE from V1 using HCP MMP atlas
+
+- Run mi_tort_visual_data_concat
+
+- calc_MI is the function needed in your search path
