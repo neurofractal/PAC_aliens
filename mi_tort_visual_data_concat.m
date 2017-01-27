@@ -1,9 +1,10 @@
-subject = {'FL'}
+subject = sort({'RS','DB','MP','GW','GR','SY','DS','EC','VS','LA','AE',...
+    'SW','DK','LH','KM'});
 
 for sub = 1:length(subject)
     
     % Load in data
-    cd(sprintf('D:\\ASD_Data\\%s\\visual\\PAC\\',subject{sub}))
+    cd(sprintf('D:\\pilot\\%s\\visual\\PAC\\',subject{sub}))
     load('virtsensV1.mat')
     
     %% Redefine to trial periods of interest
@@ -40,23 +41,23 @@ for sub = 1:length(subject)
     
     addpath('D://scripts//CFC')
     
-    [MI_matrix] = calc_MI(virtsensV1,[0.3 1.5],[4 22],[30 80],'no')
-    matrix_post = MI_matrix; save matrix_post matrix_post;
+    [MI_matrix] = calc_MI_ozkurt_test(virtsensV1,[0.0 1.5],[6 20],[30 80],'no')
+    matrix_post = MI_matrix; %save matrix_post matrix_post;
     clear MI_matrix
     
     figure('color', 'w');
-    pcolor(4:1:22,30:2:80,matrix_post)
+    pcolor(6:1:20,30:2:80,matrix_post)
     shading interp
     colormap(jet)
     ylabel('Frequency (Hz)')
     xlabel('Phase (Hz)')
     title(sprintf('Comod post-grating Subject %s',subject{sub}))
     
-    [MI_matrix] = calc_MI(virtsensV1,[-1.5 -0.3],[4 22],[30 80],'no')
-    matrix_pre = MI_matrix; save matrix_pre matrix_pre;
+    [MI_matrix] = calc_MI_ozkurt_test(virtsensV1,[-1.5 -0.0],[6 20],[30 80],'no')
+    matrix_pre = MI_matrix; %save matrix_pre matrix_pre;
     
     figure('color', 'w');
-    pcolor(4:1:22,30:2:80,matrix_pre)
+    pcolor(6:1:20,30:2:80,matrix_pre)
     shading interp
     colormap(jet)
     ylabel('Amplitude (Hz)')
@@ -67,13 +68,13 @@ for sub = 1:length(subject)
     comb = (matrix_post - matrix_pre)./(matrix_post + matrix_pre);
     
     figure('color', 'w');
-    pcolor(4:1:22,30:2:80,comb)
+    pcolor(6:1:20,30:2:80,comb)
     shading interp
     colormap(jet)
     ylabel('Frequency (Hz)')
     xlabel('Phase (Hz)')
     title(sprintf('%s',subject{sub}))
     colorbar
-    saveas(gcf,'comod_tort_MI.png')
+    %saveas(gcf,'comod_ozkurt_MI.png')
 end
 
