@@ -1,4 +1,5 @@
-%% Function to calculate MI from Fieldtrip data
+%% Function to calculate a comodulogram of Modulation Index (MI) values
+%% from Fieldtrip data using the metric from (Tort et al., 2010)
 
 % Inputs: 
 % - virtsens = MEG data (1 channel)
@@ -7,7 +8,7 @@
 % - amplitudes of interest e.g. [30 80] currently increasing in 2Hz steps
 % - diag = 'yes' or 'no' to turn on or off diagrams during computation
 
-function [MI_matrix] = calc_MI(virtsens,toi,phase,amp,diag)
+function [MI_matrix] = calc_MI_test(virtsens,toi,phase,amp,diag)
 
 if diag == 'no'
     disp('NOT producing any images during the computation of MI')
@@ -26,47 +27,40 @@ row2 = 1;
 
 for k = phase(1):1:phase(2) 
     for p = amp(1):2:amp(2) 
-        %% Concatenate, bandpass filter the data and resegment
-        % Concatenate all data
-        virtsens_concat = horzcat(virtsens.trial{1,:});
-        
+        %% Bandpass filter individual trials usign a two-way Butterworth Filter
+     
         % Specifiy bandwith = +- 1/3 of center frequency
         Pf1 = round(k -(k/3)); Pf2 = round(k +(k/3));
         Af1 = round(p -(p/3)); Af2 = round(p +(p/3));
-        
-        % Filter concat data at phase frequency using Butterworth filter
-        
-        [PhaseFreq] = ft_preproc_bandpassfilter(virtsens_concat, 1000, [Pf1 Pf2]);
-        
-        % Filter concat data at amp frequency using Butterworth filter
-        
-        [AmpFreq] = ft_preproc_bandpassfilter(virtsens_concat, 1000, [Af1 Af2]);
-        
-        % Put the filtered data back into FT structure
-        virtsens_amp = virtsens;
-        count = 1;
-        for d = 1:length(virtsens.trial)
-            virtsens_amp.trial{1,d} = AmpFreq(count:count+(length(virtsens.trial{1,1})-1));
-            count = count+length(virtsens.trial{1,1});
-        end
-        
-        virtsens_phase = virtsens;
-        count = 1;
-        for d = 1:length(virtsens.trial)
-            virtsens_phase.trial{1,d} = PhaseFreq(count:count+(length(virtsens.trial{1,1})-1));
-            count = length(virtsens.trial{1,1});
-        end
-        
-        % Cut out window of interest (phase)
+         
+        % Filter data at phase frequency using Butterworth filter
         cfg = [];
-        cfg.toilim = toi;
+        cfg.showcallinfo = 'no';
+        cfg.bpfilter = 'yes';
+        cfg.bpfreq = [Pf1 Pf2];
+        cfg.padding = 2;
+        [virtsens_phase] = ft_preprocessing(cfg, virtsens);
+        
+        % Filter data at amp frequency using Butterworth filter
+        cfg = [];
+        cfg.showcallinfo = 'no';
+        cfg.bpfilter = 'yes';
+        cfg.bpfreq = [Af1 Af2];
+        cfg.padding = 2;
+        [virtsens_amp] = ft_preprocessing(cfg, virtsens);
+        
+        % Cut out window of interest (phase) - should exlude phase-locked
+        % responses (e.g. ERPs)
+        cfg = [];
+        cfg.toilim = toi; %specfied in function calls
         cfg.showcallinfo = 'no';
         post_grating_phase = ft_redefinetrial(cfg,virtsens_phase);
         
-        % Cut out window of interest (amp)
+        % Cut out window of interest (amp) - should exlude phase-locked
+        % responses (e.g. ERPs)
         cfg = [];
         cfg.toilim = toi;
-        cfg.showcallinfo = 'no';
+        cfg.showcallinfo = 'no'; %specfied in function calls
         post_grating_amp = ft_redefinetrial(cfg,virtsens_amp);
         
         % Variable to hold MI for all trials
@@ -80,7 +74,7 @@ for k = phase(1):1:phase(2)
         for trial_num = 1:length(virtsens.trial)
             
             % Extract phase and amp info using hilbert transform
-            Phase=angle(hilbert(post_grating_phase.trial{1, trial_num}));
+            Phase=angle(hilbert(post_grating_phase.trial{1, trial_num})); % getting the phase
             Amp=abs(hilbert(post_grating_amp.trial{1, trial_num})); % getting the amplitude envelope
             
             nbin=18; % % we are breaking 0-360o in 18 bins, ie, each bin has 20o
@@ -118,8 +112,8 @@ for k = phase(1):1:phase(2)
             % Add this value to all other all other values
             MI_comb = MI + MI_comb;
             % For median uncomment these lines
-            %MI_array(trial_count) = MI;
-            %trial_count = trial_count+1;
+            % MI_array(trial_count) = MI;
+            % trial_count = trial_count+1;
             
         end
         
@@ -127,7 +121,7 @@ for k = phase(1):1:phase(2)
         MI_comb = MI_comb./length(virtsens.trial);
         
         % For median uncomment these lines
-        %MI_median = median(MI_array); disp(MI_median)
+        % MI_median = median(MI_array); disp(MI_median)
         
         % Add to Matrix
         MI_matrix(row1,row2) = MI_comb;

@@ -1,7 +1,6 @@
-%% Function to calculate PAC from Fieldtrip data using (Özkurt & Schnitzler)
+%% Function to calculate MI from Fieldtrip data (Tort et al., 2010)
 
-%% THIS IS A TEST FUNCTION WHERE I TRY OUT VARIOUS THINGS - DO NOT USE THIS
-%% FOR ANY ANALYSIS OR COMPUTATIO OF PAC. 
+%% THIS IS NOW DEPECEATED - EXTRACTING AMP/PHASE FROM CONCAT DATA LEADS TO EDGE ARTEFACTS
 
 % Inputs: 
 % - virtsens = MEG data (1 channel)
@@ -10,9 +9,7 @@
 % - amplitudes of interest e.g. [30 80] currently increasing in 2Hz steps
 % - diag = 'yes' or 'no' to turn on or off diagrams during computation
 
-% For details of the PAC method go to: https://goo.gl/xONGEs
-
-function [MI_matrix] = calc_MI_ozkurt_test(virtsens,toi,phase,amp,diag)
+function [MI_matrix] = calc_MI(virtsens,toi,phase,amp,diag)
 
 if diag == 'no'
     disp('NOT producing any images during the computation of MI')
@@ -31,53 +28,36 @@ row2 = 1;
 
 for k = phase(1):1:phase(2) 
     for p = amp(1):2:amp(2) 
-        %% Bandpass filter the data and resegment
+        %% Concatenate, bandpass filter the data and resegment
+        % Concatenate all data
+        virtsens_concat = horzcat(virtsens.trial{1,:});
         
         % Specifiy bandwith = +- 1/3 of center frequency
         Pf1 = round(k -(k/3)); Pf2 = round(k +(k/3));
         Af1 = round(p -(p/3)); Af2 = round(p +(p/3));
         
-%         % Filter concat data at phase frequency using Butterworth filter
-%         
-%         [PhaseFreq] = ft_preproc_bandpassfilter(virtsens_concat, 1000, [Pf1 Pf2]);
-%         
-%         % Filter concat data at amp frequency using Butterworth filter
-%         
-%         [AmpFreq] = ft_preproc_bandpassfilter(virtsens_concat, 1000, [Af1 Af2]);
-        
         % Filter concat data at phase frequency using Butterworth filter
-        cfg = [];
-        cfg.feedback = 'none';
-        cfg.showcallinfo = 'no';
-        cfg.bpfilter = 'yes';
-        cfg.bpfreq = [Pf1 Pf2];
-        cfg.padding = 2;
-        [virtsens_phase] = ft_preprocessing(cfg, virtsens);
+        
+        [PhaseFreq] = ft_preproc_bandpassfilter(virtsens_concat, 1000, [Pf1 Pf2]);
         
         % Filter concat data at amp frequency using Butterworth filter
         
-        cfg = [];
-        cfg.feedback = 'none';
-        cfg.showcallinfo = 'no';
-        cfg.bpfilter = 'yes';
-        cfg.bpfreq = [Af1 Af2];
-        cfg.padding = 2;
-        [virtsens_amp] = ft_preprocessing(cfg, virtsens);
+        [AmpFreq] = ft_preproc_bandpassfilter(virtsens_concat, 1000, [Af1 Af2]);
         
-%         % Put the filtered data back into FT structure
-%         virtsens_amp = virtsens;
-%         count = 1;
-%         for d = 1:length(virtsens.trial)
-%             virtsens_amp.trial{1,d} = AmpFreq(count:count+(length(virtsens.trial{1,1})-1));
-%             count = count+length(virtsens.trial{1,1});
-%         end
-%         
-%         virtsens_phase = virtsens;
-%         count = 1;
-%         for d = 1:length(virtsens.trial)
-%             virtsens_phase.trial{1,d} = PhaseFreq(count:count+(length(virtsens.trial{1,1})-1));
-%             count = length(virtsens.trial{1,1});
-%         end
+        % Put the filtered data back into FT structure
+        virtsens_amp = virtsens;
+        count = 1;
+        for d = 1:length(virtsens.trial)
+            virtsens_amp.trial{1,d} = AmpFreq(count:count+(length(virtsens.trial{1,1})-1));
+            count = count+length(virtsens.trial{1,1});
+        end
+        
+        virtsens_phase = virtsens;
+        count = 1;
+        for d = 1:length(virtsens.trial)
+            virtsens_phase.trial{1,d} = PhaseFreq(count:count+(length(virtsens.trial{1,1})-1));
+            count = length(virtsens.trial{1,1});
+        end
         
         % Cut out window of interest (phase)
         cfg = [];
@@ -105,10 +85,37 @@ for k = phase(1):1:phase(2)
             Phase=angle(hilbert(post_grating_phase.trial{1, trial_num}));
             Amp=abs(hilbert(post_grating_amp.trial{1, trial_num})); % getting the amplitude envelope
             
-            % Calculate PAC value using the formula from Özkurt paper.
-            % Function for this is modulation_index_ozkurt_nostats
-            [m_raw1 m_raw2] = modulation_index_ozkurt_nostats(Amp, Phase);
-            MI = m_raw2; % m_raw2 is the Özkurt method
+            nbin=18; % % we are breaking 0-360o in 18 bins, ie, each bin has 20o
+            position=zeros(1,nbin); % this variable will get the beginning (not the center) of each bin (in rads)
+            winsize = 2*pi/nbin;
+            for j=1:nbin
+                position(j) = -pi+(j-1)*winsize;
+            end
+            
+            % now we compute the mean amplitude in each phase:
+            MeanAmp=zeros(1,nbin);
+            for j=1:nbin
+                I = find(Phase <  position(j)+winsize & Phase >=  position(j));
+                MeanAmp(j)=mean(Amp(I));
+            end
+            
+            % so note that the center of each bin (for plotting purposes) is
+            % position+winsize/2
+            
+            % at this point you might want to plot the result to see if there's any
+            % amplitude modulation
+            if strcmp(diag, 'yes')
+                bar(10:20:720,[MeanAmp,MeanAmp]/sum(MeanAmp),'k')
+                xlim([0 720])
+                set(gca,'xtick',0:360:720)
+                xlabel('Phase (Deg)')
+                ylabel('Amplitude')
+            end
+            
+            % and next you quantify the amount of amp modulation by means of a
+            % normalized entropy index (Tort et al PNAS 2008):
+            
+            MI=(log(nbin)-(-sum((MeanAmp/sum(MeanAmp)).*log((MeanAmp/sum(MeanAmp))))))/log(nbin);
             
             % Add this value to all other all other values
             MI_comb = MI + MI_comb;

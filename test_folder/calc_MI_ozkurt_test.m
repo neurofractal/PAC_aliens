@@ -107,6 +107,7 @@ for k = phase(1):1:phase(2)
             
             % Calculate PAC value using the formula from Özkurt paper.
             % Function for this is modulation_index_ozkurt_nostats
+            
             [m_raw1 m_raw2] = modulation_index_ozkurt_nostats(Amp, Phase);
             MI = m_raw2; % m_raw2 is the Özkurt method
             
