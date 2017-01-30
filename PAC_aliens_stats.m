@@ -13,15 +13,16 @@
 % Written by Robert Seymour (ABC) - January 2017
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-subject = sort({'RS','DB','MP','GW','GR','SY','DS','EC','VS','LA','AE',...
-    'SW','DK','LH','KM'});
+subject = sort({'RS','DB','MP','GR','DS','EC','VS','LA','AE',...
+    'SW','DK','LH','KM','AN'});
+
 grandavgA = [];
 
 for i =1:length(subject)
     % cd to PAC directory
     cd(sprintf('D:\\pilot\\%s\\visual\\PAC\\',subject{i}))
     % load matrix_post
-    load('matrix_post.mat');
+    load('matrix_post_ozkurt.mat');
     % Add FT-related data structure information
     MI_post = [];
     MI_post.label = {'MI'};
@@ -41,14 +42,14 @@ for i =1:length(subject)
     % cd to PAC directory
     cd(sprintf('D:\\pilot\\%s\\visual\\PAC\\',subject{i}))
     % load matrix_pre
-    load('matrix_pre.mat');
+    load('matrix_pre_ozkurt.mat');
     % Add FT-related data structure information
     MI_pre = [];
     MI_pre.label = {'MI'};
     MI_pre.dimord = 'chan_freq_time';
     MI_pre.freq = [30:2:80];
     MI_pre.time = [6:1:20];
-    MI_pre.powspctrm = [matrix_post];
+    MI_pre.powspctrm = [matrix_pre];
     MI_pre.powspctrm = reshape(MI_pre.powspctrm,[1,26,15]);
     % Add to meta-matrix
     grandavgB{i} = MI_pre;
@@ -65,8 +66,8 @@ cfg.parameter   = 'powspctrm';
 cfg.correctm    = 'cluster';
 cfg.computecritval = 'yes'
 cfg.numrandomization = 1000;
-cfg.alpha       = 0.1; % Set alpha level
-cfg.clusteralpha = 0.1;
+cfg.alpha       = 0.08; % Set alpha level
+cfg.clusteralpha = 0.05;
 cfg.tail        = 1;    % Two sided testing
 
 % Design Matrix
@@ -99,7 +100,7 @@ cfg=[];
 cfg.parameter = 'stat';
 cfg.maskparameter = 'mask';
 cfg.maskstyle     = 'outline';
-cfg.zlim = 'maxabs';
+%cfg.zlim = 'maxabs';
 cfg.ylim = [30 80];
 cfg.xlim    = [6 16];
 % cfg.ylim = [30 100]
