@@ -1,7 +1,7 @@
-%% Function to calculate PAC from Fieldtrip data using (Canolty 2006)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% THIS IS A TEST FUNCTION WHERE I TRY OUT VARIOUS THINGS - DO NOT USE THIS
-%% FOR ANY ANALYSIS OR COMPUTATIO OF PAC. 
+% Function to calculate a comodulogram of Modulation Index (MI) values
+% from Fieldtrip data using the metric from (Canolty et al., 2006)
 
 % Inputs: 
 % - virtsens = MEG data (1 channel)
@@ -10,9 +10,18 @@
 % - amplitudes of interest e.g. [30 80] currently increasing in 2Hz steps
 % - diag = 'yes' or 'no' to turn on or off diagrams during computation
 
-% For details of the PAC method go to: https://goo.gl/xONGEs
+% Inputs: 
+% - virtsens = MEG data (1 channel)
+% - toi = times of interest in seconds e.g. [0.3 1.5]
+% - phases of interest e.g. [4 22] currently increasing in 1Hz steps
+% - amplitudes of interest e.g. [30 80] currently increasing in 2Hz steps
+% - diag = 'yes' or 'no' to turn on or off diagrams during computation
 
-function [MI_matrix] = calc_MI_canolty_test(virtsens,toi,phase,amp,diag)
+% For details of the PAC method go to: http://science.sciencemag.org/content/313/5793/1626
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+function [MI_matrix] = calc_MI_canolty(virtsens,toi,phase,amp,diag)
 
 if diag == 'no'
     disp('NOT producing any images during the computation of MI')
@@ -37,14 +46,6 @@ for k = phase(1):1:phase(2)
         Pf1 = round(k -(k/3)); Pf2 = round(k +(k/3));
         Af1 = round(p -(p/3)); Af2 = round(p +(p/3));
         
-%         % Filter concat data at phase frequency using Butterworth filter
-%         
-%         [PhaseFreq] = ft_preproc_bandpassfilter(virtsens_concat, 1000, [Pf1 Pf2]);
-%         
-%         % Filter concat data at amp frequency using Butterworth filter
-%         
-%         [AmpFreq] = ft_preproc_bandpassfilter(virtsens_concat, 1000, [Af1 Af2]);
-        
         % Filter concat data at phase frequency using Butterworth filter
         cfg = [];
         cfg.feedback = 'none';
@@ -63,21 +64,6 @@ for k = phase(1):1:phase(2)
         cfg.bpfreq = [Af1 Af2];
         cfg.padding = 2;
         [virtsens_amp] = ft_preprocessing(cfg, virtsens);
-        
-%         % Put the filtered data back into FT structure
-%         virtsens_amp = virtsens;
-%         count = 1;
-%         for d = 1:length(virtsens.trial)
-%             virtsens_amp.trial{1,d} = AmpFreq(count:count+(length(virtsens.trial{1,1})-1));
-%             count = count+length(virtsens.trial{1,1});
-%         end
-%         
-%         virtsens_phase = virtsens;
-%         count = 1;
-%         for d = 1:length(virtsens.trial)
-%             virtsens_phase.trial{1,d} = PhaseFreq(count:count+(length(virtsens.trial{1,1})-1));
-%             count = length(virtsens.trial{1,1});
-%         end
         
         % Cut out window of interest (phase)
         cfg = [];

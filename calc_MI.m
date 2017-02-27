@@ -1,14 +1,19 @@
-%% Function to calculate a comodulogram of Modulation Index (MI) values
-%% from Fieldtrip data using the metric from (Tort et al., 2010)
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Function to calculate a comodulogram of Modulation Index (MI) values
+% from Fieldtrip data using the metric from (Tort et al., 2010)
+%
 % Inputs: 
 % - virtsens = MEG data (1 channel)
 % - toi = times of interest in seconds e.g. [0.3 1.5]
 % - phases of interest e.g. [4 22] currently increasing in 1Hz steps
 % - amplitudes of interest e.g. [30 80] currently increasing in 2Hz steps
 % - diag = 'yes' or 'no' to turn on or off diagrams during computation
-
-function [MI_matrix] = calc_MI_test(virtsens,toi,phase,amp,diag)
+%
+% For details of the PAC method go to: http://jn.physiology.org/content/104/2/1195.short
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [MI_matrix] = calc_MI(virtsens,toi,phase,amp,diag)
 
 if diag == 'no'
     disp('NOT producing any images during the computation of MI')
