@@ -14,7 +14,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 subject = sort({'RS','DB','MP','GR','DS','EC','VS','LA','AE',...
-    'SW','DK','LH','KM','AN'});
+    'SW','DK','LH','KM','AN','GW','SY','FL'});
+
+% subject = {'0401','0402','0403','0404','0405','0406','0407','0409','0411',...
+%     '0413','0414','0415','0416'};%,'1401','1402','1403'};
 
 grandavgA = [];
 
@@ -22,7 +25,7 @@ for i =1:length(subject)
     % cd to PAC directory
     cd(sprintf('D:\\pilot\\%s\\visual\\PAC\\',subject{i}))
     % load matrix_post
-    load('matrix_post_ozkurt.mat');
+    load('matrix_post.mat');
     % Add FT-related data structure information
     MI_post = [];
     MI_post.label = {'MI'};
@@ -42,7 +45,7 @@ for i =1:length(subject)
     % cd to PAC directory
     cd(sprintf('D:\\pilot\\%s\\visual\\PAC\\',subject{i}))
     % load matrix_pre
-    load('matrix_pre_ozkurt.mat');
+    load('matrix_pre.mat');
     % Add FT-related data structure information
     MI_pre = [];
     MI_pre.label = {'MI'};
@@ -66,7 +69,7 @@ cfg.parameter   = 'powspctrm';
 cfg.correctm    = 'cluster';
 cfg.computecritval = 'yes'
 cfg.numrandomization = 1000;
-cfg.alpha       = 0.08; % Set alpha level
+cfg.alpha       = 0.05; % Set alpha level
 cfg.clusteralpha = 0.05;
 cfg.tail        = 1;    % Two sided testing
 
@@ -106,18 +109,6 @@ cfg.xlim    = [6 16];
 % cfg.ylim = [30 100]
 figure;
 ft_singleplotTFR(cfg,stat); colormap('jet');
-
-% masked_tfr = reshape(diff_MI.powspctrm,[26,19]).*reshape(stat.mask,[26,19]); 
-% 
-% 
-% figure('color', 'w');
-% pcolor(6:1:22,30:2:80,masked_tfr(:,3:end))
-% shading interp
-% colormap(jet);
-% 
-% reshape(stat.mask,[26,19]); 
-% contour(4:1:22,30:2:80,fff)
-
 
 
 
