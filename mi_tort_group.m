@@ -1,19 +1,20 @@
-subject = sort({'RS','DB','MP','GW','GR','SY','DS','EC','VS','LA','AE','SW','DK','LH','KM'});
+subject = sort({'RS','DB','MP','GR','DS','EC','VS','LA','AE','SY','GW',...
+    'SW','DK','LH','KM','FL','AN'});
 
 combined_matrix_all = zeros(26,15);
 
 for i = 1:length(subject)
     cd(sprintf('D:\\pilot\\%s\\visual\\PAC\\',subject{i}))
-    load('matrix_post.mat'); load('matrix_pre.mat') 
+    load('matrix_post_canolty.mat'); load('matrix_pre_canolty.mat') 
     comb = (matrix_post - matrix_pre)./(matrix_post + matrix_pre);
     %comb = (matrix_post - matrix_pre)
     
     combined_matrix_all = combined_matrix_all + comb;
 end
 
-% combined_matrix_post = combined_matrix_post./ length(subject);
-% 
-% combined_matrix_pre = zeros(26,19);
+combined_matrix_all= combined_matrix_all./ length(subject);
+
+% combined_matrix_pre = zeros(26,15);
 % clear i;
 % 
 % for i = 1:length(subject)
@@ -25,43 +26,29 @@ end
 % combined_matrix_pre = combined_matrix_pre./ length(subject);
 % 
 % comb = (combined_matrix_post - combined_matrix_pre)./(combined_matrix_post + combined_matrix_pre);
-
+% 
 figure('color', 'w');
 pcolor(6:1:20,30:2:80,combined_matrix_all);colorbar;shading interp;
 colormap(jet); ylabel('Amplitude (Hz)'); xlabel('Phase (Hz)')
 title(sprintf('Group N = %d', length(subject))) 
 
-
-
-
 %%
-subject = {'0401','0402','0403','0404','0405','0406','0407','0409','0413','0414'}
+subject = {'0401','0402','0403','0404','0405','0406','0407','0409','0411',...
+    '0413','0414','0415','0416'};%,'1401','1402','1403'};
 
-combined_matrix_post = zeros(26,19);
-
-for i = 1:length(subject)
-    cd(sprintf('D:\\ASD_Data\\%s\\visual\\PAC\\',subject{i}))
-    load('matrix_post.mat')
-    combined_matrix_post = matrix_post + combined_matrix_post;
-end
-
-combined_matrix_post = combined_matrix_post./ length(subject);
-
-combined_matrix_pre = zeros(26,19);
-clear i;
+combined_matrix_all = zeros(26,15);
 
 for i = 1:length(subject)
     cd(sprintf('D:\\ASD_Data\\%s\\visual\\PAC\\',subject{i}))
-    load('matrix_pre.mat')
-    combined_matrix_pre = matrix_pre + combined_matrix_pre;
+    load('matrix_post_canolty.mat'); load('matrix_pre_canolty.mat') 
+    comb = (matrix_post - matrix_pre)./(matrix_post + matrix_pre);
+    %comb = (matrix_post - matrix_pre)
+    
+    combined_matrix_all = combined_matrix_all + comb;
 end
-
-combined_matrix_pre = combined_matrix_pre./ length(subject);
-
-comb = (combined_matrix_post - combined_matrix_pre)./(combined_matrix_post + combined_matrix_pre);
 
 figure('color', 'w');
-pcolor(6:1:18,30:2:80,comb(:,3:15));colorbar;shading interp;
+pcolor(6:1:20,30:2:80,comb);colorbar;shading interp;
 colormap(jet); ylabel('Amplitude (Hz)'); xlabel('Phase (Hz)')
 title(sprintf('ASD Group N = %d', length(subject))) 
 
