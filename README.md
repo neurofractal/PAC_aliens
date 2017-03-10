@@ -4,7 +4,7 @@
 
 There is increasing interest in understanding how the phase and amplitude of distinct neural oscillations might interact to support dynamic communication within the brain. In particular, previous work has demonstrated a coupling between the phase of low frequency oscillations and the amplitude (or power) of high frequency oscillations during certain tasks, termed phase amplitude coupling (PAC).
 
-[Imgur](http://i.imgur.com/Jsrrwbt.jpg)
+![Imgur](http://i.imgur.com/Jsrrwbt.jpg)
 
 **Phase Amplitude Coupling (PAC) is hypothesised to emerge when high frequency gamma-band activity becomes coupled to the phase of a lower frequency oscillation via an Excitation:Inhibition circuit.
 
