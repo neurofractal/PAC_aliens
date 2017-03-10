@@ -22,6 +22,8 @@ Therefore, in this paper we discuss our approach to PAC analysis, using an MEG d
 
 Each dataset was first cleaned using Maxfilter using tSSS with a 0.9 correlation limit. Further preprocessing was performed using the script [preprocessing_elektra_FT_MASTER.m](https://github.com/neurofractal/MEG_preprocessing/blame/master/preprocessing_elektra_FT_MASTER.m) resulting in a variable termed data_clean_noICA for each subject.
 
+<script src="https://gist.github.com/neurofractal/04590f7468c44651f9465e2c6329dbd3.js"></script>
+
 ### Area V1 Virtual Electrode
 
 In order to investigate PAC representative time course from area V1. 
