@@ -1,6 +1,6 @@
 # The Detection of Phase Amplitude Coupling During Sensory Processing
 
-## Robert Seymour
+## Robert Seymour, Klaus Kessler & Gina Rippon (2017)
 
 There is increasing interest in understanding how the phase and amplitude of distinct neural oscillations might interact to support dynamic communication within the brain. In particular, previous work has demonstrated a coupling between the phase of low frequency oscillations and the amplitude (or power) of high frequency oscillations during certain tasks, termed phase amplitude coupling (PAC).
 
