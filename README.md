@@ -20,9 +20,19 @@ Therefore, in this paper we discuss our approach to PAC analysis, using an MEG d
 
 ### Preprocessing
 
-Each dataset was first cleaned using Maxfilter using tSSS with a 0.9 correlation limit.
+Each dataset was first cleaned using Maxfilter using tSSS with a 0.9 correlation limit. Further preprocessing was performed using the script [preprocessing_elektra_FT_MASTER.m](https://github.com/neurofractal/MEG_preprocessing/blame/master/preprocessing_elektra_FT_MASTER.m) resulting in a variable termed data_clean_noICA for each subject.
 
-Further preprocessing was performed using the script [preprocessing_elektra_FT_MASTER.m](https://github.com/neurofractal/MEG_preprocessing/blame/master/preprocessing_elektra_FT_MASTER.m).
+### Area V1 Virtual Electrode
+
+In order to investigate PAC representative time course from area V1. 
+
+To do this created a 3D cortical mesh using Freesurfer and registered to a common FS_LR space using the instructions from the [Human Connectome Project](https://wiki.humanconnectome.org/download/attachments/63078513/Resampling-FreeSurfer-HCP.pdf?version=1&modificationDate=1472225460934&api=v2). This mesh was downsampled 4002 vertices per hemisphere.
+
+I used HCP MMP 1.0 Atlas 
+
+### PAC Analysis
+
+
 
 
 
