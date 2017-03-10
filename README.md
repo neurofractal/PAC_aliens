@@ -1,5 +1,4 @@
 # The Detection of Phase Amplitude Coupling During Sensory Processing
-
 ## Robert Seymour, Klaus Kessler & Gina Rippon (2017)
 
 There is increasing interest in understanding how the phase and amplitude of distinct neural oscillations might interact to support dynamic communication within the brain. In particular, previous work has demonstrated a coupling between the phase of low frequency oscillations and the amplitude (or power) of high frequency oscillations during certain tasks, termed phase amplitude coupling (PAC).
@@ -23,7 +22,7 @@ Therefore, in this paper we discuss our approach to PAC analysis, using an MEG d
 
 Each dataset was first cleaned using Maxfilter using tSSS with a 0.9 correlation limit.
 
-Further preprocessing was performed using the script (preprocessing_elektra_FT_MASTER.m)[https://github.com/neurofractal/MEG_preprocessing/blame/master/preprocessing_elektra_FT_MASTER.m].
+Further preprocessing was performed using the script [preprocessing_elektra_FT_MASTER.m](https://github.com/neurofractal/MEG_preprocessing/blame/master/preprocessing_elektra_FT_MASTER.m).
 
 
 
