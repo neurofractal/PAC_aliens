@@ -13,3 +13,17 @@ During visual processing in humans, PAC has been reliably observed between ongoi
 
 Therefore, in this paper we discuss our approach to PAC analysis, using an MEG dataset from 20 participants performing an interactive paradigm with embedded visual grating. 
 
+### Paradigm 
+
+![Imgur](http://i.imgur.com/dzT8Kdp.png)
+
+## Analysis
+
+### Preprocessing
+
+Each dataset was first cleaned using Maxfilter using tSSS with a 0.9 correlation limit.
+
+Further preprocessing was performed using the script (preprocessing_elektra_FT_MASTER.m)[https://github.com/neurofractal/MEG_preprocessing/blame/master/preprocessing_elektra_FT_MASTER.m].
+
+
+
